@@ -22,3 +22,4 @@ test:
 	go test -v ./...
 
 include hack/make-rules/verify.mk
+include hack/make-rules/docker.mk

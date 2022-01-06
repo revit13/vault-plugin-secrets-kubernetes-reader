@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - '*'
   pull_request:
     branches:
       - master
@@ -16,6 +18,11 @@ jobs:
   build:
     name: Build and push img
     runs-on: ubuntu-latest
+    env:
+        DOCKER_HOSTNAME: "ghcr.io"
+        DOCKER_NAMESPACE: revit13
+        DOCKER_USERNAME: ${{ github.actor }}
+        DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -31,12 +38,26 @@ jobs:
         restore-keys: ${{ runner.os }}-ut-m2
     - name: Build
       run: make build
-    - name: Docker login
-      if: ${{ github.event_name != 'pull_request' }}
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u "${{ github.actor }}" --password-stdin "${{ env.DOCKER_HOSTNAME }}"
-    - name: Docker build
-      run: docker build . -t ghcr.io/fybrik/vault-plugin-secrets-kubernetes-reader:latest -f Dockerfile
-    - name: Docker push
-      if: ${{ github.event_name != 'pull_request' }}
-      run: docker push ghcr.io/fybrik/vault-plugin-secrets-kubernetes-reader:latest
+    - id: version
+      if: github.event_name != 'pull_request'
+      name: Infer version
+      run: |
+        version="${GITHUB_REF#refs/tags/v}"
+        if  [[ $version == refs/* ]] ;
+        then
+          version='master'
+         fi
+        echo "DOCKER_TAGNAME=$version" >> $GITHUB_ENV
+        echo ::set-output name=push_tag_event::$push_tag_event
+    - name: Publish images
+      if: github.event_name != 'pull_request'
+      run: | 
+        make docker-build 
+        make docker-push
+    - name: Publish latest image tag on push tag event
+      if: github.event_name != 'pull_request' && steps.version.outputs.push_tag_event == 'true'
+      run: |
+        echo "DOCKER_TAGNAME=latset" >> $GITHUB_ENV
+        make docker-build
+        make docker-push
 
