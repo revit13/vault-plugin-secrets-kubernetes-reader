@@ -39,3 +39,11 @@ changelog:
       - '^style:'
       - '^refactor:'
 
+dockers:
+ -
+ # Templates of the Docker image names.
+    image_templates:
+    - "ghcr.io/revit13/{{.ProjectName}}:latest"
+    - "ghcr.io/revit13/{{.ProjectName}}:{{ .Tag }}"
+
+    skip_push: true
