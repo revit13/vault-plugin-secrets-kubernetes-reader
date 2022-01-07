@@ -1,5 +1,5 @@
 FROM alpine:latest
 
 WORKDIR /
-COPY ./vault/plugins/vault-plugin-secrets-kubernetes-reader .
+COPY ../../dist/vault-plugin-secrets-kubernetes-reader_linux_amd64/vault-plugin-secrets-kubernetes-reader .
 
