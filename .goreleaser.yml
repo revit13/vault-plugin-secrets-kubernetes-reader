@@ -46,7 +46,7 @@ changelog:
 dockers:
   - image_templates: 
     - "ghcr.io/revit13/{{.ProjectName}}:latest"
-    - "ghcr.io/revit13/{{.ProjectName}}:{{ .Tag }}"
+    - "ghcr.io/revit13/{{.ProjectName}}:{{ .Version }}"
     dockerfile: Dockerfile.goreleaser
     goos: linux
     goarch: amd64
