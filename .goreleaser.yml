@@ -11,37 +11,12 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 builds:
-  - id: linux-amd64
-    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
-    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
     goos:
       - linux
-    goarch:
-      - amd64
-
-  - id: darwin-amd64
-    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
-    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
-    goos:
-      - darwin
-    goarch:
-      - amd64
-  
-  - id: darwin-arm64
-    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
-    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
-    goos:
-      - darwin
-    goarch:
-      - arm64
-
-  - id: windows-amd64
-    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
-    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
-    goos:
       - windows
-    goarch:
-      - amd64
+      - darwin
+    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
+    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
 release:
   draft: true
 archives:
