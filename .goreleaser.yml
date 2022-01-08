@@ -78,4 +78,7 @@ dockers:
     build_flag_templates:
       - --platform=linux/amd64
     skip_push: true
+    binary: ./vault/plugins/vault-plugin-secrets-kubernetes-reader
+    main: ./cmd/vault-plugin-secrets-kubernetes-reader/main.go
+
 
