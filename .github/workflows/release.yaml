@@ -27,7 +27,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v2.5.0
         with:
           version: latest
-          args: release --rm-dist
+          args: release --rm-dist --debug
 #          workdir: ./cmd/vault-plugin-secrets-kubernetes-reader # <-- path to directory with main() func
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
