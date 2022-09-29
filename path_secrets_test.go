@@ -10,26 +10,32 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
-func getTestBackend(t *testing.T) logical.Backend {
+func getTestBackend(t *testing.T) (logical.Backend, error) {
 	t.Logf("Testing Fooxx")
-	b, _ := newBackend()
+	b, err := newBackend()
+	if err != nil {
+		return nil, err
+	}
 	t.Logf("Testing Foo")
 	c := &logical.BackendConfig{
 		Logger: hclog.New(&hclog.LoggerOptions{}),
 	}
 	t.Logf("Testing Foo1")
-	err := b.Setup(context.Background(), c)
+	err = b.Setup(context.Background(), c)
 	t.Logf("Testing Foo2")
 	if err != nil {
 		t.Fatalf("unable to create backend: %v", err)
 	}
 	t.Logf("Testing Foo3")
-	return b
+	return b, nil
 }
 
 func TestSecretNamespaceMissing(t *testing.T) {
 	t.Logf("Testing Foo7")
-	b := getTestBackend(t)
+	b, err := getTestBackend(t)
+	if err != nil {
+		t.Errorf("Error %s", err.Error())
+	}
 
 	request := &logical.Request{
 		Operation: logical.ReadOperation,
