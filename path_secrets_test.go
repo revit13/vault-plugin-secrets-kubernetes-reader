@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"k8s.io/client-go/kubernetes/scheme"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
 	"github.com/hashicorp/vault/sdk/logical"
 	. "github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
@@ -12,9 +16,9 @@ import (
 	"github.com/hashicorp/go-hclog"
 )
 
-func getTestBackend(t *testing.T) (logical.Backend, error) {
+func getTestBackend(k8sclient *client.Client, t *testing.T) (logical.Backend, error) {
 	t.Logf("Testing Fooxx")
-	b, err := newBackend(t)
+	b, err := newBackend(k8sclient, t)
 	if err != nil {
 		t.Logf("Testing hererer")
 		return nil, err
@@ -38,7 +42,8 @@ func TestSecretNamespaceMissing(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 	defer GinkgoRecover()
 	t.Logf("Testing Foo7")
-	b, err := getTestBackend(t)
+	k8sClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{Scheme: scheme.Scheme})
+	b, err := getTestBackend(&k8sClient, t)
 	g.Expect(err).To(gomega.BeNil())
 
 	request := &logical.Request{

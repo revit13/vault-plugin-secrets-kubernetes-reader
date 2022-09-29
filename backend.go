@@ -10,8 +10,9 @@ import (
 	"github.com/hashicorp/vault/sdk/logical"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // backend wraps the backend framework
@@ -25,7 +26,16 @@ var _ logical.Factory = Factory
 
 // Factory configures and returns the plugin backends
 func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
-	b, err := newBackend()
+	scheme := runtime.NewScheme()
+	err := clientgoscheme.AddToScheme(scheme)
+	if err != nil {
+		return nil, err
+	}
+	client, err := kclient.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
+	if err != nil {
+		return nil, err
+	}
+	b, err := newBackend(&client)
 	if err != nil {
 		return nil, err
 	}
@@ -41,29 +51,21 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	return b, nil
 }
 
-func newBackend(b_optional ...*testing.T) (*secretsReaderBackend, error) {
+func newBackend(k8sClient *client.Client, b_optional ...*testing.T) (*secretsReaderBackend, error) {
 	var t *testing.T
 	if len(b_optional) > 0 {
 		t = b_optional[0]
 	}
 	t.Logf("Testing Fooffff")
-	scheme := runtime.NewScheme()
-	t.Logf("Testing rrr")
-	err := clientgoscheme.AddToScheme(scheme)
-	if err != nil {
-		return nil, err
-	}
+
 	t.Logf("Testing Fooffeeff")
 
 	// TODO: support configuration where Vault installed out of cluster
-	client, err := kclient.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
-	if err != nil {
-		return nil, err
-	}
+
 	t.Logf("Testing Foofeeeeefeeff")
 	b := &secretsReaderBackend{
 		KubeSecretReader: KubernetesSecretsReader{
-			client: client,
+			client: *k8sClient,
 		},
 	}
 	t.Logf("Testing Foofee444444eeefeeff")
