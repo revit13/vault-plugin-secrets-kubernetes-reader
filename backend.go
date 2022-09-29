@@ -60,13 +60,13 @@ func newBackend(b_optional ...*testing.T) (*secretsReaderBackend, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	t.Logf("Testing Foofeeeeefeeff")
 	b := &secretsReaderBackend{
 		KubeSecretReader: KubernetesSecretsReader{
 			client: client,
 		},
 	}
-
+	t.Logf("Testing Foofee444444eeefeeff")
 	b.Backend = &framework.Backend{
 		Help: strings.TrimSpace(backendHelp),
 		// TypeLogical indicates that the backend (plugin) is a secret provider.
@@ -76,6 +76,7 @@ func newBackend(b_optional ...*testing.T) (*secretsReaderBackend, error) {
 			pathSecrets(b),
 		},
 	}
+	t.Logf("Testing Foofeeeeerrerereeeefeeff")
 
 	return b, nil
 }
