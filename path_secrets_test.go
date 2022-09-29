@@ -43,6 +43,7 @@ func TestSecretNamespaceMissing(t *testing.T) {
 	defer GinkgoRecover()
 	t.Logf("Testing Foo7")
 	k8sClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{Scheme: scheme.Scheme})
+	g.Expect(err).To(gomega.BeNil())
 	b, err := getTestBackend(&k8sClient, t)
 	g.Expect(err).To(gomega.BeNil())
 
