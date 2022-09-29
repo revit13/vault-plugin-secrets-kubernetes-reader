@@ -11,6 +11,7 @@ import (
 )
 
 func getTestBackend(t *testing.T) logical.Backend {
+	t.Logf("Testing Fooxx")
 	b, _ := newBackend()
 	t.Logf("Testing Foo")
 	c := &logical.BackendConfig{
