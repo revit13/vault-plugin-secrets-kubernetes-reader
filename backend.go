@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"testing"
 
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
@@ -40,12 +41,19 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	return b, nil
 }
 
-func newBackend() (*secretsReaderBackend, error) {
+func newBackend(b_optional ...*testing.T) (*secretsReaderBackend, error) {
+	var t *testing.T
+	if len(b_optional) > 0 {
+		t = b_optional[0]
+	}
+	t.Logf("Testing Fooffff")
 	scheme := runtime.NewScheme()
+	t.Logf("Testing rrr")
 	err := clientgoscheme.AddToScheme(scheme)
 	if err != nil {
 		return nil, err
 	}
+	t.Logf("Testing Fooffeeff")
 
 	// TODO: support configuration where Vault installed out of cluster
 	client, err := kclient.New(kconfig.GetConfigOrDie(), kclient.Options{Scheme: scheme})

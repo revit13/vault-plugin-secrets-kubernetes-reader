@@ -12,7 +12,7 @@ import (
 
 func getTestBackend(t *testing.T) (logical.Backend, error) {
 	t.Logf("Testing Fooxx")
-	b, err := newBackend()
+	b, err := newBackend(t)
 	if err != nil {
 		t.Logf("Testing hererer")
 		return nil, err
