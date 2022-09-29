@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/hashicorp/vault/sdk/logical"
+	. "github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 
 	"github.com/hashicorp/go-hclog"
 )
@@ -32,11 +34,12 @@ func getTestBackend(t *testing.T) (logical.Backend, error) {
 }
 
 func TestSecretNamespaceMissing(t *testing.T) {
+	gomega.RegisterFailHandler(Fail)
+	g := gomega.NewGomegaWithT(t)
+	defer GinkgoRecover()
 	t.Logf("Testing Foo7")
 	b, err := getTestBackend(t)
-	if err != nil {
-		t.Errorf("Error %s", err.Error())
-	}
+	g.Expect(err).To(gomega.BeNil())
 
 	request := &logical.Request{
 		Operation: logical.ReadOperation,
@@ -45,8 +48,6 @@ func TestSecretNamespaceMissing(t *testing.T) {
 	}
 
 	errMsg := "Missing secret namespace"
-	resp, _ := b.HandleRequest(context.Background(), request)
-	if resp.Error().Error() != errMsg {
-		t.Errorf("Error must be '%s', get '%s'", errMsg, resp.Error())
-	}
+	resp, err := b.HandleRequest(context.Background(), request)
+	g.Expect(err.Error()).Should(gomega.Equal(resp.Error().Error()), errMsg)
 }
