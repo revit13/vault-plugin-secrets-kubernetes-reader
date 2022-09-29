@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"testing"
 
-	"k8s.io/client-go/kubernetes/scheme"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/hashicorp/vault/sdk/logical"
 	. "github.com/onsi/ginkgo/v2"
@@ -42,7 +44,10 @@ func TestSecretNamespaceMissing(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 	defer GinkgoRecover()
 	t.Logf("Testing Foo7")
-	k8sClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{Scheme: scheme.Scheme})
+	scheme := runtime.NewScheme()
+	err := corev1.AddToScheme(scheme)
+	g.Expect(err).To(gomega.BeNil())
+	k8sClient, err := client.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
 	g.Expect(err).To(gomega.BeNil())
 	b, err := getTestBackend(&k8sClient, t)
 	g.Expect(err).To(gomega.BeNil())
