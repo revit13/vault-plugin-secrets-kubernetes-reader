@@ -12,18 +12,22 @@ import (
 
 func getTestBackend(t *testing.T) logical.Backend {
 	b, _ := newBackend()
-
+	t.Logf("Testing Foo")
 	c := &logical.BackendConfig{
 		Logger: hclog.New(&hclog.LoggerOptions{}),
 	}
+	t.Logf("Testing Foo1")
 	err := b.Setup(context.Background(), c)
+	t.Logf("Testing Foo2")
 	if err != nil {
 		t.Fatalf("unable to create backend: %v", err)
 	}
+	t.Logf("Testing Foo3")
 	return b
 }
 
 func TestSecretNamespaceMissing(t *testing.T) {
+	t.Logf("Testing Foo7")
 	b := getTestBackend(t)
 
 	request := &logical.Request{
