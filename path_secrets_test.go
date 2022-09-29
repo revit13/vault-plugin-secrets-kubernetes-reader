@@ -14,6 +14,7 @@ func getTestBackend(t *testing.T) (logical.Backend, error) {
 	t.Logf("Testing Fooxx")
 	b, err := newBackend()
 	if err != nil {
+		t.Logf("Testing hererer")
 		return nil, err
 	}
 	t.Logf("Testing Foo")
