@@ -11,7 +11,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
-	kconfig "sigs.k8s.io/controller-runtime/pkg/client/config"
+	ctrl "sigs.k8s.io/controller-runtime"
 )
 
 // backend wraps the backend framework
@@ -56,7 +56,7 @@ func newBackend(b_optional ...*testing.T) (*secretsReaderBackend, error) {
 	t.Logf("Testing Fooffeeff")
 
 	// TODO: support configuration where Vault installed out of cluster
-	client, err := kclient.New(kconfig.GetConfigOrDie(), kclient.Options{Scheme: scheme})
+	client, err := kclient.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
 	if err != nil {
 		return nil, err
 	}
