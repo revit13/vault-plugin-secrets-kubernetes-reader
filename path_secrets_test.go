@@ -5,11 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	kclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/hashicorp/vault/sdk/logical"
 	. "github.com/onsi/ginkgo/v2"
@@ -44,12 +40,14 @@ func TestSecretNamespaceMissing(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 	defer GinkgoRecover()
 	t.Logf("Testing Foo7")
-	scheme := runtime.NewScheme()
-	err := corev1.AddToScheme(scheme)
+	/*scheme := runtime.NewScheme()
+	err := clientgoscheme.AddToScheme(scheme)
 	g.Expect(err).To(gomega.BeNil())
-	k8sClient, err := client.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
-	g.Expect(err).To(gomega.BeNil())
-	b, err := getTestBackend(&k8sClient, t)
+	// TODO: support configuration where Vault installed out of cluster
+	k8sClient, err := kclient.New(kconfig.GetConfigOrDie(), kclient.Options{Scheme: scheme})
+	g.Expect(err).To(gomega.BeNil())*/
+
+	b, err := getTestBackend(nil, t)
 	g.Expect(err).To(gomega.BeNil())
 
 	request := &logical.Request{

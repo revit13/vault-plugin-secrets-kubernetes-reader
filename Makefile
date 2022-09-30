@@ -1,3 +1,5 @@
+include Makefile.env
+
 GOARCH = amd64
 OS = linux
 
@@ -17,8 +19,14 @@ enable:
 clean:
 	rm -f ./vault/plugins/vault-plugin-secrets-kubernetes-reader
 
+.PHONY: create-cluster
+create-cluster:
+	$(MAKE) kind
+
 .PHONY: test
-test:
+test: create-cluster
 	go test -v ./...
 
 include hack/make-rules/verify.mk
+include hack/make-rules/tools.mk
+

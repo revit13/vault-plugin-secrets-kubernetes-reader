@@ -1,7 +1,7 @@
 package kubesecrets
 
 import (
-	"context"
+	/*"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -13,6 +13,20 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	kclient "sigs.k8s.io/controller-runtime/pkg/client"
+	kconfig "sigs.k8s.io/controller-runtime/pkg/client/config"*/
+
+	"context"
+	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/hashicorp/vault/sdk/framework"
+	"github.com/hashicorp/vault/sdk/logical"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes/fake"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	kclient "sigs.k8s.io/controller-runtime/pkg/client"
+	kconfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
 // backend wraps the backend framework
@@ -31,7 +45,7 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	if err != nil {
 		return nil, err
 	}
-	client, err := kclient.New(ctrl.GetConfigOrDie(), kclient.Options{Scheme: scheme})
+	client, err := kclient.New(kconfig.GetConfigOrDie(), kclient.Options{Scheme: scheme})
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +65,7 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	return b, nil
 }
 
-func newBackend(k8sClient *client.Client, b_optional ...*testing.T) (*secretsReaderBackend, error) {
+func newBackend(k8sClient *kclient.Client, b_optional ...*testing.T) (*secretsReaderBackend, error) {
 	var t *testing.T
 	if len(b_optional) > 0 {
 		t = b_optional[0]
@@ -63,9 +77,20 @@ func newBackend(k8sClient *client.Client, b_optional ...*testing.T) (*secretsRea
 	// TODO: support configuration where Vault installed out of cluster
 
 	t.Logf("Testing Foofeeeeefeeff")
+
+	scheme := runtime.NewScheme()
+	_ = clientgoscheme.AddToScheme(scheme)
+
+	fc := fake.NewSimpleClientset(&exampleDeploy)
+
+	// TODO: support configuration where Vault installed out of cluster
+	client, err := kclient.New(kconfig.GetConfigOrDie(), kclient.Options{Scheme: scheme})
+	if err != nil {
+		return nil, err
+	}
 	b := &secretsReaderBackend{
 		KubeSecretReader: KubernetesSecretsReader{
-			client: *k8sClient,
+			client: client,
 		},
 	}
 	t.Logf("Testing Foofee444444eeefeeff")
